@@ -37,6 +37,17 @@ export default function SelectedMovieDetails({
   const watchedRating = watched.find((el) => el.imdbID === imdbID)?.userRating;
 
   useEffect(() => {
+    const callbackfn = (e) => {
+      if (e.key === "Escape") setSelectedId(null);
+    };
+
+    document.addEventListener("keydown", callbackfn);
+    return () => {
+      document.removeEventListener("keydown", callbackfn);
+    };
+  }, [setSelectedId]);
+
+  useEffect(() => {
     const getMovieDetails = async () => {
       setIsLoading(true);
       const res = await fetch(

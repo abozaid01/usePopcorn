@@ -69,6 +69,8 @@ export default function App() {
       setErr("");
       return;
     }
+
+    setSelectedId(null);
     fetchData();
 
     return () => {
