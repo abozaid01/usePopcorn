@@ -28,6 +28,9 @@ export default function App() {
       userRating: movie.userRating,
     };
 
+    if (Number.isNaN(newWatchedMovie.imdbRating))
+      newWatchedMovie.imdbRating = 0;
+
     setWatched((cur) => [...cur, newWatchedMovie]);
   };
 
@@ -36,12 +39,15 @@ export default function App() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchData() {
       setIsLoading(true);
       setErr("");
       try {
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          { signal: controller.signal }
         );
 
         if (!res.ok) throw new Error(`something went wrong with fething data.`);
@@ -52,7 +58,7 @@ export default function App() {
 
         setMovies(data.Search);
       } catch (error) {
-        setErr(error.message);
+        if (error.name !== "AbortError") setErr(error.message);
       } finally {
         setIsLoading(false);
       }
@@ -64,6 +70,10 @@ export default function App() {
       return;
     }
     fetchData();
+
+    return () => {
+      controller.abort();
+    };
   }, [query]);
 
   return (

@@ -51,6 +51,14 @@ export default function SelectedMovieDetails({
     getMovieDetails();
   }, [selectedId]);
 
+  useEffect(() => {
+    if (!Title) return;
+    document.title = `Movie | ${Title}`;
+    return () => {
+      document.title = "usePopcorn";
+    };
+  }, [Title]);
+
   return (
     <div className="details">
       {isLoading ? (
